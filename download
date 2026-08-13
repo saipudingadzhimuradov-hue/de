@@ -1,0 +1,373 @@
+export interface ProductColor {
+  name: string;
+  hex: string;
+}
+
+export interface Product {
+  id: number;
+  slug: string;
+  name: string;
+  /** Must match a `slug` from data/categories.ts */
+  category: string;
+  price: number;
+  featured: boolean;
+  description: string;
+  /** First image is used as the cover photo everywhere in the UI */
+  images: string[];
+  dimensions: string;
+  materials: string[];
+  colors: ProductColor[];
+}
+
+/**
+ * ЕДИНЫЙ ИСТОЧНИК ДАННЫХ О ТОВАРАХ.
+ *
+ * Чтобы добавить новый товар — скопируйте один объект и измените поля.
+ * `slug` должен быть уникальным (используется в URL: /product/[slug]).
+ * `category` должен совпадать со `slug` категории из data/categories.ts.
+ * `images` — можно указывать внешние ссылки (как сейчас) или локальные
+ * файлы из public/images/products/..., например: "/images/products/lecco-1.jpg".
+ *
+ * В будущем этот файл легко заменить на запросы к CMS/базе данных —
+ * везде в проекте товары читаются через функции ниже (getProductBySlug,
+ * getFeaturedProducts, getRelatedProducts), а не напрямую из массива.
+ */
+export const PRODUCTS: Product[] = [
+  {
+    id: 1,
+    slug: "sofa-lecco",
+    name: "Модульный диван Lecco",
+    category: "sofas",
+    price: 189000,
+    featured: true,
+    description:
+      "Глубокий модульный диван с мягким объёмным силуэтом. Каркас на массиве бука, независимый пружинный блок, съёмные чехлы.",
+    images: [
+      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "280 × 160 × 78 см",
+    materials: ["Массив бука", "Велюр", "ППУ высокой плотности"],
+    colors: [
+      { name: "Графит", hex: "#3a3a38" },
+      { name: "Молоко", hex: "#efe8db" },
+      { name: "Терракота", hex: "#a15c3e" },
+    ],
+  },
+  {
+    id: 2,
+    slug: "sofa-aurora",
+    name: "Диван Aurora велюровый",
+    category: "sofas",
+    price: 154000,
+    featured: false,
+    description:
+      "Компактный прямой диван в мягком велюре с точёными деревянными ножками — универсален для городской квартиры.",
+    images: [
+      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "220 × 95 × 82 см",
+    materials: ["Велюр", "Массив дуба", "ППУ"],
+    colors: [
+      { name: "Молоко", hex: "#efe8db" },
+      { name: "Оливка", hex: "#6b6a4c" },
+    ],
+  },
+  {
+    id: 3,
+    slug: "bed-torino",
+    name: "Кровать Torino",
+    category: "beds",
+    price: 98000,
+    featured: false,
+    description:
+      "Кровать с высоким мягким изголовьем и каретной стяжкой. Прочный ортопедический каркас, ламели в комплекте.",
+    images: [
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1616627561950-9f746e330187?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "160 × 200 см",
+    materials: ["Экокожа", "Массив сосны", "ЛДСП"],
+    colors: [
+      { name: "Графит", hex: "#3a3a38" },
+      { name: "Бежевый", hex: "#d9cbb4" },
+    ],
+  },
+  {
+    id: 4,
+    slug: "bed-milano",
+    name: "Кровать Milano platform",
+    category: "beds",
+    price: 76000,
+    featured: false,
+    description:
+      "Низкая platform-кровать в духе минимализма. Открытый деревянный каркас без изголовья, японский стиль.",
+    images: [
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "160 × 200 см",
+    materials: ["Массив дуба", "Шпон ореха"],
+    colors: [
+      { name: "Орех", hex: "#6e4a32" },
+      { name: "Дуб натуральный", hex: "#b08b5f" },
+    ],
+  },
+  {
+    id: 5,
+    slug: "wardrobe-verona",
+    name: "Шкаф-купе Verona",
+    category: "wardrobes",
+    price: 112000,
+    featured: false,
+    description:
+      "Вместительный шкаф-купе с зеркальными фасадами и продуманным наполнением: штанги, полки, ящики.",
+    images: [
+      "https://images.unsplash.com/photo-1595428773960-24d0942d92f7?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "240 × 60 × 240 см",
+    materials: ["ЛДСП", "Зеркало", "Алюминиевый профиль"],
+    colors: [
+      { name: "Белый матовый", hex: "#f3efe6" },
+      { name: "Графит", hex: "#3a3a38" },
+    ],
+  },
+  {
+    id: 6,
+    slug: "wardrobe-nova",
+    name: "Гардеробная система Nova",
+    category: "wardrobes",
+    price: 245000,
+    featured: true,
+    description:
+      "Модульная гардеробная под индивидуальный размер помещения. Открытые и закрытые модули, подсветка.",
+    images: [
+      "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1595428773960-24d0942d92f7?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "по индивидуальному проекту",
+    materials: ["Массив дуба", "ЛДСП", "LED-подсветка"],
+    colors: [
+      { name: "Дуб натуральный", hex: "#b08b5f" },
+      { name: "Черный матовый", hex: "#141312" },
+    ],
+  },
+  {
+    id: 7,
+    slug: "kitchen-fusion",
+    name: "Кухня Fusion матовая",
+    category: "kitchens",
+    price: 320000,
+    featured: true,
+    description:
+      "Прямая кухня с матовыми фасадами без ручек и встроенной техникой. Столешница — искусственный камень.",
+    images: [
+      "https://images.unsplash.com/photo-1556909114-44e3e70034e2?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "по индивидуальному проекту",
+    materials: ["МДФ, матовая эмаль", "Искусственный камень"],
+    colors: [
+      { name: "Молоко", hex: "#efe8db" },
+      { name: "Графит", hex: "#3a3a38" },
+    ],
+  },
+  {
+    id: 8,
+    slug: "kitchen-loft",
+    name: "Кухня Loft со шпоном",
+    category: "kitchens",
+    price: 410000,
+    featured: false,
+    description:
+      "Кухня в стиле лофт: шпон дуба, чёрный металл, открытые полки. Остров с барной стойкой.",
+    images: [
+      "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1556909114-44e3e70034e2?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "по индивидуальному проекту",
+    materials: ["Шпон дуба", "Металл", "Камень"],
+    colors: [
+      { name: "Дуб натуральный", hex: "#b08b5f" },
+      { name: "Черный матовый", hex: "#141312" },
+    ],
+  },
+  {
+    id: 9,
+    slug: "table-quercia",
+    name: "Обеденный стол Quercia",
+    category: "tables",
+    price: 87000,
+    featured: false,
+    description:
+      "Массивный обеденный стол из цельного дуба на скульптурном металлическом основании.",
+    images: [
+      "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1449247709967-d4461a6a6103?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "220 × 95 × 76 см",
+    materials: ["Массив дуба", "Черный металл"],
+    colors: [
+      { name: "Дуб натуральный", hex: "#b08b5f" },
+      { name: "Орех", hex: "#6e4a32" },
+    ],
+  },
+  {
+    id: 10,
+    slug: "table-orbit",
+    name: "Журнальный столик Orbit",
+    category: "tables",
+    price: 32000,
+    featured: false,
+    description:
+      "Круглый журнальный столик с фактурной каменной столешницей и тонкой латунной ножкой.",
+    images: [
+      "https://images.unsplash.com/photo-1449247709967-d4461a6a6103?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "Ø 70 × 38 см",
+    materials: ["Искусственный камень", "Латунь"],
+    colors: [
+      { name: "Терраццо", hex: "#cbbfa8" },
+      { name: "Черный", hex: "#141312" },
+    ],
+  },
+  {
+    id: 11,
+    slug: "chair-arco",
+    name: "Стул Arco деревянный",
+    category: "chairs",
+    price: 14500,
+    featured: false,
+    description: "Скандинавский обеденный стул из гнутого дуба с эргономичной спинкой.",
+    images: [
+      "https://images.unsplash.com/photo-1580480055273-228ff5388ef8?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "46 × 52 × 80 см",
+    materials: ["Массив дуба"],
+    colors: [
+      { name: "Дуб натуральный", hex: "#b08b5f" },
+      { name: "Венге", hex: "#4a3626" },
+    ],
+  },
+  {
+    id: 12,
+    slug: "chair-bergamo",
+    name: "Кресло Bergamo",
+    category: "chairs",
+    price: 68000,
+    featured: false,
+    description: "Мягкое кресло с высокой спинкой и объёмным подлокотником — акцентный предмет для гостиной.",
+    images: [
+      "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1580480055273-228ff5388ef8?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "85 × 90 × 105 см",
+    materials: ["Букле", "Массив бука"],
+    colors: [
+      { name: "Молоко", hex: "#efe8db" },
+      { name: "Терракота", hex: "#a15c3e" },
+    ],
+  },
+  {
+    id: 13,
+    slug: "living-solo",
+    name: "Гостиная Solo composition",
+    category: "living-rooms",
+    price: 275000,
+    featured: true,
+    description:
+      "Полная композиция для гостиной: диван, тумба под ТВ, консоль и системы хранения в едином материале.",
+    images: [
+      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "по индивидуальному проекту",
+    materials: ["Шпон дуба", "Велюр", "Металл"],
+    colors: [
+      { name: "Графит", hex: "#3a3a38" },
+      { name: "Дуб натуральный", hex: "#b08b5f" },
+    ],
+  },
+  {
+    id: 14,
+    slug: "bedroom-cortina",
+    name: "Спальня Cortina комплект",
+    category: "bedrooms",
+    price: 198000,
+    featured: false,
+    description: "Комплект для спальни: кровать, две прикроватные тумбы и комод в едином силуэте.",
+    images: [
+      "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1616627561950-9f746e330187?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "160 × 200 см (кровать)",
+    materials: ["Экокожа", "Массив сосны", "ЛДСП"],
+    colors: [
+      { name: "Бежевый", hex: "#d9cbb4" },
+      { name: "Графит", hex: "#3a3a38" },
+    ],
+  },
+  {
+    id: 15,
+    slug: "console-ferro",
+    name: "Консоль Ferro металл/дерево",
+    category: "other",
+    price: 45000,
+    featured: false,
+    description: "Узкая консоль для прихожей на тонких металлических ножках с дубовой столешницей.",
+    images: [
+      "https://images.unsplash.com/photo-1449247709967-d4461a6a6103?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "120 × 35 × 82 см",
+    materials: ["Массив дуба", "Черный металл"],
+    colors: [
+      { name: "Дуб натуральный", hex: "#b08b5f" },
+      { name: "Черный", hex: "#141312" },
+    ],
+  },
+  {
+    id: 16,
+    slug: "pouf-terra",
+    name: "Пуф Terra рогожка",
+    category: "other",
+    price: 21000,
+    featured: false,
+    description: "Круглый пуф из плотной рогожки на деревянных ножках — компактный акцент для любой комнаты.",
+    images: [
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1400&q=80",
+      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1400&q=80",
+    ],
+    dimensions: "Ø 45 × 40 см",
+    materials: ["Рогожка", "Массив бука"],
+    colors: [
+      { name: "Молоко", hex: "#efe8db" },
+      { name: "Оливка", hex: "#6b6a4c" },
+    ],
+  },
+];
+
+export function getAllProducts(): Product[] {
+  return PRODUCTS;
+}
+
+export function getProductBySlug(slug: string): Product | undefined {
+  return PRODUCTS.find((p) => p.slug === slug);
+}
+
+export function getFeaturedProducts(): Product[] {
+  return PRODUCTS.filter((p) => p.featured);
+}
+
+export function getRelatedProducts(product: Product, limit = 3): Product[] {
+  return PRODUCTS.filter((p) => p.category === product.category && p.id !== product.id).slice(0, limit);
+}
+
+export function getProductsByCategory(category: string): Product[] {
+  return PRODUCTS.filter((p) => p.category === category);
+}

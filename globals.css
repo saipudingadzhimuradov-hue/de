@@ -1,0 +1,135 @@
+"use client";
+
+import { useMemo, useState, useEffect } from "react";
+import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
+import Reveal from "@/components/Reveal";
+import ProductCard from "@/components/ProductCard";
+import { CATEGORIES, getCategoryName } from "@/data/categories";
+import { PRODUCTS } from "@/data/products";
+
+type SortOption = "default" | "price-asc" | "price-desc" | "name";
+
+const FILTER_CATEGORIES = [{ slug: "all", name: "Все" }, ...CATEGORIES];
+
+export default function CatalogClient({ initialCategory }: { initialCategory: string }) {
+  const [category, setCategory] = useState(initialCategory || "all");
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<SortOption>("default");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
+  useEffect(() => {
+    setCategory(initialCategory || "all");
+  }, [initialCategory]);
+
+  const filtered = useMemo(() => {
+    let list = PRODUCTS.filter((p) => category === "all" || p.category === category);
+    if (query.trim()) {
+      const q = query.trim().toLowerCase();
+      list = list.filter((p) => p.name.toLowerCase().includes(q) || getCategoryName(p.category).toLowerCase().includes(q));
+    }
+    if (sort === "price-asc") list = [...list].sort((a, b) => a.price - b.price);
+    if (sort === "price-desc") list = [...list].sort((a, b) => b.price - a.price);
+    if (sort === "name") list = [...list].sort((a, b) => a.name.localeCompare(b.name, "ru"));
+    return list;
+  }, [category, query, sort]);
+
+  return (
+    <div className="pt-24 md:pt-28">
+      <div className="max-w-wrap mx-auto px-5 md:px-10 pb-8 md:pb-10">
+        <Reveal>
+          <p className="text-[12px] tracking-[0.25em] uppercase text-wooddark mb-3">Каталог</p>
+          <h1 className="font-serif text-4xl md:text-6xl text-ink">Вся мебель DE PARCO</h1>
+        </Reveal>
+      </div>
+
+      {/* filter bar */}
+      <div className="sticky top-16 md:top-20 z-30 bg-milk/95 backdrop-blur-sm border-y border-ink/10">
+        <div className="max-w-wrap mx-auto px-5 md:px-10 py-3.5 flex items-center gap-3">
+          <div className="relative flex-1 max-w-xs">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink/40" strokeWidth={1.6} />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Поиск по каталогу"
+              className="w-full bg-transparent border border-ink/15 pl-9 pr-3 py-2.5 text-sm placeholder:text-ink/40 focus:outline-none focus:border-wood transition-colors"
+            />
+          </div>
+          <button
+            onClick={() => setFiltersOpen((v) => !v)}
+            className="md:hidden flex items-center gap-1.5 px-3.5 py-2.5 border border-ink/15 text-sm text-ink/80 shrink-0"
+          >
+            <SlidersHorizontal size={15} strokeWidth={1.6} /> Фильтры
+          </button>
+          <div className="hidden md:flex items-center gap-1.5 flex-wrap flex-1">
+            {FILTER_CATEGORIES.map((c) => (
+              <button
+                key={c.slug}
+                onClick={() => setCategory(c.slug)}
+                className={`px-3.5 py-1.5 text-[13px] tracking-wide transition-colors ${
+                  category === c.slug ? "bg-ink text-milk" : "text-ink/60 hover:text-ink"
+                }`}
+              >
+                {c.name}
+              </button>
+            ))}
+          </div>
+          <div className="relative shrink-0 ml-auto">
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortOption)}
+              className="appearance-none bg-transparent border border-ink/15 pl-3.5 pr-8 py-2.5 text-sm text-ink/80 focus:outline-none focus:border-wood cursor-pointer"
+            >
+              <option value="default">По умолчанию</option>
+              <option value="price-asc">Сначала дешевле</option>
+              <option value="price-desc">Сначала дороже</option>
+              <option value="name">По названию</option>
+            </select>
+            <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-ink/50" />
+          </div>
+        </div>
+        {filtersOpen && (
+          <div className="md:hidden flex gap-1.5 flex-wrap px-5 pb-4 pt-1">
+            {FILTER_CATEGORIES.map((c) => (
+              <button
+                key={c.slug}
+                onClick={() => {
+                  setCategory(c.slug);
+                  setFiltersOpen(false);
+                }}
+                className={`px-3 py-1.5 text-[12.5px] tracking-wide border ${
+                  category === c.slug ? "bg-ink text-milk border-ink" : "text-ink/60 border-ink/15"
+                }`}
+              >
+                {c.name}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="max-w-wrap mx-auto px-5 md:px-10 py-12 md:py-16">
+        {filtered.length === 0 ? (
+          <Reveal className="text-center py-24">
+            <p className="font-serif text-2xl text-ink mb-3">Ничего не найдено</p>
+            <p className="text-ink/55 font-light mb-6">Попробуйте изменить запрос или сбросить фильтры</p>
+            <button
+              onClick={() => {
+                setQuery("");
+                setCategory("all");
+              }}
+              className="px-6 py-3 border border-ink/20 text-[13px] tracking-[0.08em] uppercase hover:bg-ink hover:text-milk transition-colors"
+            >
+              Сбросить фильтры
+            </button>
+          </Reveal>
+        ) : (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-10 md:gap-x-8">
+            {filtered.map((p, i) => (
+              <ProductCard key={p.id} product={p} index={i} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

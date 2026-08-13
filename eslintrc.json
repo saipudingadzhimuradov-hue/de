@@ -1,0 +1,21 @@
+export interface GalleryImage {
+  src: string;
+  label: string;
+  tall?: boolean;
+}
+
+/**
+ * Фотографии для секции "Галерея" и блока Instagram на главной странице.
+ * Замените `src` на локальные файлы из public/images/gallery/, когда
+ * появятся реальные фотографии DE PARCO.
+ */
+export const GALLERY_IMAGES: GalleryImage[] = [
+  { src: "https://images.unsplash.com/photo-1618221469555-7f3ad97540d6?auto=format&fit=crop&w=1200&q=80", tall: true, label: "Интерьер гостиной" },
+  { src: "https://images.unsplash.com/photo-1586105251261-72a756497a11?auto=format&fit=crop&w=1200&q=80", tall: false, label: "Деталь дивана" },
+  { src: "https://images.unsplash.com/photo-1580129958221-887a6f39eb14?auto=format&fit=crop&w=1200&q=80", tall: true, label: "Обеденная зона" },
+  { src: "https://images.unsplash.com/photo-1567016432779-094069958ea5?auto=format&fit=crop&w=1200&q=80", tall: false, label: "Спальня" },
+  { src: "https://images.unsplash.com/photo-1631889993959-41b4e9c6e3c5?auto=format&fit=crop&w=1200&q=80", tall: false, label: "Диван, деталь" },
+  { src: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1200&q=80", tall: true, label: "Гостиная" },
+  { src: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80", tall: false, label: "Кресло" },
+  { src: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1200&q=80", tall: true, label: "Кухня" },
+];
